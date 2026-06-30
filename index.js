@@ -52,10 +52,15 @@ async function loadPlugins() {
 async function startBot() {
   console.log("🚀 Starting Black Blade...");
 
+
+console.log("1");
   const { version } = await fetchLatestBaileysVersion();
 
+  console.log("2");
   const { state, saveCreds } =
     await useMultiFileAuthState(settings.SESSION_DIR);
+
+  console.log("3");
 
   sock = makeWASocket({
     version,
@@ -74,16 +79,19 @@ async function startBot() {
     }
 
     if (connection === "close") {
-      const code = lastDisconnect?.error?.output?.statusCode;
+  const code = lastDisconnect?.error?.output?.statusCode;
+  console.log("❌ Connection closed");
+  console.log("Disconnect code:", code);
+  console.log("Full error:", lastDisconnect?.error);
 
-      if (code === DisconnectReason.loggedOut) {
-        console.log("❌ Logged Out");
-        process.exit(0);
-      }
+  if (code === DisconnectReason.loggedOut) {
+    console.log("❌ Logged Out");
+    process.exit(0);
+  }
 
-      console.log("🔄 Reconnecting...");
-      setTimeout(startBot, 5000);
-    }
+  console.log("🔄 Reconnecting in 5 seconds...");
+  setTimeout(startBot, 5000);
+}
   });
 
   sock.ev.on("messages.upsert", async ({ messages }) => {
