@@ -119,6 +119,12 @@ console.log("1");
 
     const cmd = (args.shift() || "").toLowerCase();
 
+    // DEBUG: Log owner status
+    console.log(`📝 Command: ${cmd}`);
+    console.log(`👤 Sender: ${sender}`);
+    console.log(`🔐 Owner: ${owner}`);
+    console.log(`📋 OWNERS array: ${JSON.stringify(settings.OWNERS)}`);
+
     for (const plugin of plugins) {
       try {
         if (!plugin.command) continue;
@@ -138,7 +144,8 @@ console.log("1");
           from,
           sender,
           args,
-          owner
+          owner,
+          settings
         });
 
       } catch (err) {
