@@ -108,8 +108,11 @@ console.log("1");
 
     const from = msg.key.remoteJid;
     const sender = msg.key.participant || from;
+    
+    // Extract phone number from sender
+    const senderPhone = sender?.split("@")[0];
 
-    const owner = isOwner(sender, settings.OWNERS);
+    const owner = isOwner(senderPhone, settings.OWNERS);
 
     const args =
       text
@@ -120,10 +123,11 @@ console.log("1");
     const cmd = (args.shift() || "").toLowerCase();
 
     // DEBUG: Log owner status
-    console.log(`📝 Command: ${cmd}`);
-    console.log(`👤 Sender: ${sender}`);
+    console.log(`\n📝 Command: ${cmd}`);
+    console.log(`👤 Sender JID: ${sender}`);
+    console.log(`📱 Sender Phone: ${senderPhone}`);
     console.log(`🔐 Owner: ${owner}`);
-    console.log(`📋 OWNERS array: ${JSON.stringify(settings.OWNERS)}`);
+    console.log(`📋 OWNERS array: ${JSON.stringify(settings.OWNERS)}\n`);
 
     for (const plugin of plugins) {
       try {
