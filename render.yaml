@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: whatsapp-bot
+    runtime: node
+    startCommand: node index.js
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
