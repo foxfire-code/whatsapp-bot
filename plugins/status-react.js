@@ -30,7 +30,7 @@ export default {
 
     if (!action) {
       return sock.sendMessage(from, {
-        text: `📊 *Status React Settings*\n\nStatus: ${config.enabled ? "✅ ON" : "❌ OFF"}\nDelay: ${config.delay}ms\nEmoji: ${config.emoji}\n\n*Commands:*\n.statusreact on/off\n.statusreact delay 5000\n.statusreact emoji 🔥`
+        text: `📊 *Status React Settings*\n\nStatus: ${config.enabled ? "✅ ON" : "❌ OFF"}\nDelay: ${config.delay}ms\nEmoji: ${config.emoji}\n\n*Commands:*\n.statusreact on/off\n.statusreact delay <ms>\n.statusreact emoji <emoji>`
       });
     }
 
