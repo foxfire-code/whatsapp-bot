@@ -13,13 +13,7 @@ function saveSettings(data) {
 export default {
   command: ["antiviewonce", "antivv"],
 
-  async execute({ sock, from, args, owner, settings }) {
-    if (!owner) {
-      return sock.sendMessage(from, {
-        text: "❌ Owner only"
-      });
-    }
-
+  async execute({ sock, from, args, settings }) {
     const action = args[0]?.toLowerCase();
     const data = loadSettings();
 
@@ -49,7 +43,7 @@ export default {
 
   async onMessage({ sock, msg, from, sender, settings }) {
     const data = loadSettings();
-    const owners = settings.OWNERS || [];
+    const owners = settings?.OWNERS || [];
 
     // Check if anti-viewonce is enabled for this chat
     if (!data.enabled[from]) return;
@@ -92,32 +86,28 @@ export default {
       recoveryText += `📸 Type: ${mediaType === "image" ? "Photo" : "Video"}\n`;
       recoveryText += `⏰ Time: ${new Date(msg.messageTimestamp * 1000).toLocaleString()}`;
 
-      // Forward to MYS
+      // Forward to owners
       for (const owner of owners) {
-  const jid = `${owner}@s.whatsapp.net`;
+        const jid = `${owner}@s.whatsapp.net`;
 
-  try {
-    if (mediaType === "image") {
-      await sock.sendMessage(jid, {
-        image: { url: mediaMessage.url || mediaMessage.mediaKey },
-        caption: recoveryText
-      });
-    } else if (mediaType === "video") {
-      await sock.sendMessage(jid, {
-        video: { url: mediaMessage.url || mediaMessage.mediaKey },
-        caption: recoveryText
-      });
-    }
-  } catch (e) {
-    console.log("ViewOnce forward error:", e.message);
-  }
-}
-
-          saveSettings(data);
+        try {
+          if (mediaType === "image") {
+            await sock.sendMessage(jid, {
+              image: { url: mediaMessage.url || mediaMessage.mediaKey },
+              caption: recoveryText
+            });
+          } else if (mediaType === "video") {
+            await sock.sendMessage(jid, {
+              video: { url: mediaMessage.url || mediaMessage.mediaKey },
+              caption: recoveryText
+            });
+          }
         } catch (e) {
-          console.log(`⚠️ Failed to forward ViewOnce media: ${e.message}`);
+          console.log("ViewOnce forward error:", e.message);
         }
       }
+
+      saveSettings(data);
     } catch (e) {
       console.log(`⚠️ Anti-ViewOnce error: ${e.message}`);
     }
