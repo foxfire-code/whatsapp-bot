@@ -46,11 +46,7 @@ function extractMessageContent(msg) {
 export default {
   command: ["antidelete", "antidel"],
 
-  async execute({ sock, from, args, owner }) {
-    if (!owner) {
-      return sock.sendMessage(from, { text: "❌ Owner only" });
-    }
-
+  async execute({ sock, from, args, settings }) {
     const data = getSettings();
     const action = (args[0] || "").toLowerCase();
 
@@ -115,41 +111,43 @@ export default {
       `⏰ Time: ${new Date(deleted.timestamp * 1000).toLocaleString()}`;
 
     // send to owners
-    for (const owner of settings.OWNERS) {
-      const jid = `${owner}@s.whatsapp.net`;
+    if (settings && settings.OWNERS) {
+      for (const owner of settings.OWNERS) {
+        const jid = `${owner}@s.whatsapp.net`;
 
-      try {
-        if (type === "image" && deleted.content.image) {
-          await sock.sendMessage(jid, {
-            image: deleted.content.image,
-            caption
-          });
-        } else if (type === "video" && deleted.content.video) {
-          await sock.sendMessage(jid, {
-            video: deleted.content.video,
-            caption
-          });
-        } else if (type === "audio" && deleted.content.audio) {
-          await sock.sendMessage(jid, {
-            audio: deleted.content.audio,
-            mimetype: "audio/mp4"
-          });
-        } else if (type === "document" && deleted.content.document) {
-          await sock.sendMessage(jid, {
-            document: deleted.content.document,
-            caption
-          });
-        } else if (type === "sticker" && deleted.content.sticker) {
-          await sock.sendMessage(jid, {
-            sticker: deleted.content.sticker
-          });
-        } else {
-          await sock.sendMessage(jid, {
-            text: caption + `\n\n💬 Text: ${deleted.content.text || "N/A"}`
-          });
+        try {
+          if (type === "image" && deleted.content.image) {
+            await sock.sendMessage(jid, {
+              image: deleted.content.image,
+              caption
+            });
+          } else if (type === "video" && deleted.content.video) {
+            await sock.sendMessage(jid, {
+              video: deleted.content.video,
+              caption
+            });
+          } else if (type === "audio" && deleted.content.audio) {
+            await sock.sendMessage(jid, {
+              audio: deleted.content.audio,
+              mimetype: "audio/mp4"
+            });
+          } else if (type === "document" && deleted.content.document) {
+            await sock.sendMessage(jid, {
+              document: deleted.content.document,
+              caption
+            });
+          } else if (type === "sticker" && deleted.content.sticker) {
+            await sock.sendMessage(jid, {
+              sticker: deleted.content.sticker
+            });
+          } else {
+            await sock.sendMessage(jid, {
+              text: caption + `\n\n💬 Text: ${deleted.content.text || "N/A"}`
+            });
+          }
+        } catch (e) {
+          console.log("Anti-delete send error:", e.message);
         }
-      } catch (e) {
-        console.log("Anti-delete send error:", e.message);
       }
     }
   }
