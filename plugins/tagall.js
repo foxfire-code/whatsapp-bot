@@ -1,13 +1,7 @@
 export default {
   command: ["tagall", "mentionall", "tag"],
 
-  async execute({ sock, msg, from, owner }) {
-    if (!owner) {
-      return sock.sendMessage(from, {
-        text: "❌ Owner only"
-      });
-    }
-
+  async execute({ sock, msg, from }) {
     // Only works in groups
     if (!from.endsWith("@g.us")) {
       return sock.sendMessage(from, {
